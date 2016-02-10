@@ -12,7 +12,7 @@ public class GiveDamageToTarget : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             other.GetComponent<Health>().TakeDamage(DamageToGive, gameObject);
-            //player = other.GetComponent<Player>();
+
         }
         else if (other.CompareTag("Enemy") && damageAll)
         {
@@ -22,6 +22,13 @@ public class GiveDamageToTarget : MonoBehaviour
         {
             return;
         }
+
+        GiveDamageBehaviour();
+    }
+
+    public virtual void GiveDamageBehaviour()
+    {
+        // Currently nothing.
     }
 }
 

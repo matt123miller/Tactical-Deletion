@@ -102,7 +102,6 @@ public  class GlobalStateManager : IObserver, ISubject
     {
         gsmState = WorldState.ambientState;
         observers.Add(this);
-        Debug.Log(observers[0]);
     }
 
     public GlobalStateManager()

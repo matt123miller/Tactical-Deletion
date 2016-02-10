@@ -38,7 +38,7 @@ public class AIManager : IObserver
     private WorldState worldState;
 
     private static GlobalStateManager gsm;
-    public AISight aiSight;
+    private AISight aiSight;
     private Health selfHealth, playerHealth;
 
     private bool inSight;

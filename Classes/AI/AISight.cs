@@ -23,6 +23,9 @@ public class AISight : MonoBehaviour
 
     private void Start()
     {
+        // Start each agents timer on a semi random time, why not? 
+        // Should space out the bigger computations across different frames instead of all agents in 1 frame
+        fUpdateTimer += Random.Range(-0.1f, 0.1f);
     }
 
 
@@ -37,6 +40,7 @@ public class AISight : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
+        
         if (fUpdateTimer > fUpdateTarget)
         {
             fUpdateTimer = 0.0f;
@@ -54,8 +58,6 @@ public class AISight : MonoBehaviour
 
     public bool Look(Vector3 otherPosition)
     {
-
-
         Vector3 direction = otherPosition - eyes.position;
 
         hit = new RaycastHit();

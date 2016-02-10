@@ -23,7 +23,7 @@ public class Health : MonoBehaviour, IGiveHealth, ITakeDamage
     private bool _isDead = false;
 
     //public Player player;
-    public int maxHealth;
+    public int maxHealth = 100;
     public AudioClip healthGainSound;
     public AudioClip healthLossSound;
 
