@@ -17,6 +17,7 @@ public enum AIStates
     unsureAlarmed
 }
 
+[RequireComponent(typeof(ThirdPersonCharacter))]
 public class AIManager : IObserver
 {
 
@@ -35,14 +36,18 @@ public class AIManager : IObserver
     // Classes
     private AIStates aiState;
     private WorldState worldState;
-    public ThirdPersonCharacter character { get; private set; }
-    public AISight aiSight;
+
     private static GlobalStateManager gsm;
+    public AISight aiSight;
     private Health selfHealth, playerHealth;
 
+    private bool inSight;
+
+    public ThirdPersonCharacter character { get; private set; }
     public NavMeshAgent navAgent;
 
-    public Transform playerTrans;
+
+    private GameObject playerGO;
     private Vector3 resetPosition = new Vector3(1000.0f, 1000.0f, 1000.0f);
     [SerializeField]
     private Vector3 lastKnownPos, previousSighting, targetPos;
@@ -50,6 +55,10 @@ public class AIManager : IObserver
     [SerializeField]
     private float cooldownCheck, cooldownTimer, timer;
 
+    #region Properties
+
+    // Last known position may or may not be where the player is now.
+    // State classes should take that into account and maybe not assume that's where the player definitely is.
     public Vector3 LKP
     {
         get { return lastKnownPos; }
@@ -62,6 +71,12 @@ public class AIManager : IObserver
         set { aiState = value; }
     }
 
+    public bool InSight
+    {
+        get { return inSight; }
+        set { inSight = value; }
+    }
+    #endregion
 
     // Use this for initialization
     void Awake()
@@ -73,16 +88,17 @@ public class AIManager : IObserver
         aiSight.aim = this;
         aiSight.Eyes = gameObject.transform;
         
-        playerTrans = GameObject.FindGameObjectWithTag("Player").transform;
+        playerGO = GameObject.FindGameObjectWithTag("Player");
         navAgent = GetComponentInChildren<NavMeshAgent>();
         character = GetComponent<ThirdPersonCharacter>();
         selfHealth = GetComponent<Health>();
 
-        chaseState = new ChaseState(this);
+        chaseState = new ChaseState(this, playerGO.transform);
         alertState = new AlertState(this);
         patrolState = new PatrolState(this, navAgent);
         attackState = new AttackState(this);
 
+        currentState = patrolState;
     }
 
     void Start()
@@ -125,8 +141,8 @@ public class AIManager : IObserver
     void Update()
     {
 
-        #region
-        if (playerTrans != null)
+        #region Boilerplate for AIM 
+        if (playerGO != null)
         {
             // update the agents posiiton 
             navAgent.transform.position = transform.position;
@@ -149,7 +165,7 @@ public class AIManager : IObserver
         // Check AISight for current sight status, do stuff.
 
 
-        if ((gsm.GSMState == WorldState.alarmState) && (AIState != AIStates.personalAlarmed) && !aiSight.InSight)
+        if ((gsm.GSMState == WorldState.alarmState) && (AIState != AIStates.personalAlarmed) && !inSight)
         {
             AIState = AIStates.personalAlarmed;
             //unsureAlarmed = true;
@@ -164,7 +180,7 @@ public class AIManager : IObserver
 
         //AI cooldown to normal
         //if (!aisight.InSight && !gsm.AlarmState && (personalAlarmed || unsureAlarmed) && !alarmSearching)
-        if ((gsm.GSMState != WorldState.alarmState) && (AIState == AIStates.personalAlarmed) && !aiSight.InSight)
+        if ((gsm.GSMState != WorldState.alarmState) && (AIState == AIStates.personalAlarmed) && !inSight)
         {
             cooldownTimer += Time.deltaTime;
 

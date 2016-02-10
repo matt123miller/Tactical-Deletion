@@ -6,42 +6,49 @@ public class ChaseState : MonoBehaviour, IEnemyState {
 
 
     private readonly AIManager aim;
-    
 
-    public ChaseState(AIManager statepatternenemy)
+    private Transform playerTrans;
+    private float minChaseDistance, maxChaseDistance;
+
+    public ChaseState(AIManager statepatternenemy, Transform player)
     {
         aim = statepatternenemy;
+        playerTrans = player;
     }
 
 
     public void UpdateState()
     {
-        Look();
+        
+        if (aim.InSight)
+        {
+            float enemyToTarget = (playerTrans.position - transform.position).magnitude;
+
+            if (enemyToTarget < minChaseDistance)
+            {
+                ToAttackState();
+            }
+            else if (enemyToTarget > maxChaseDistance)
+            {
+                ToAlertState();
+            }
+
+            return;
+        }
+        else 
+        {
+            ToAlertState();
+            return;
+        }
+
         Chase();
     }
 
-    private void Look()
-    {
-        RaycastHit hit;
-        // Used to look directly at target insteazd of forward
-        Vector3 enemyToTarget = (aim.chaseTarget.position + aim.offset) - aim.eyes.transform.position;
-
-        if (Physics.Raycast(aim.eyes.transform.position, enemyToTarget, out hit, aim.sightRange) && hit.collider.CompareTag("Player"))
-        {
-            aim.chaseTarget = hit.transform;
-            ToChaseState();
-        }
-        else
-        {
-            // Maybe then wrap in a timer or some condition
-            ToAlertState();
-        }
-    }
-
+    
     private void Chase()
     {
-        aim.navMeshAgent.destination = aim.chaseTarget.position;
-        aim.navMeshAgent.Resume();
+        aim.navAgent.destination = playerTrans.position;
+        aim.navAgent.Resume();
 
         // If close enough then move to 
     }
@@ -75,9 +82,5 @@ public class ChaseState : MonoBehaviour, IEnemyState {
 
     }
 
-    //wtf?
-    public static implicit operator Transform(ChaseState v)
-    {
-        throw new NotImplementedException();
-    }
+    
 }

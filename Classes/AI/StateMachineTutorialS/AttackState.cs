@@ -25,7 +25,7 @@ public class AttackState : MonoBehaviour, IEnemyState
     private void Attack()
     {
         Debug.Log("attacking");
-        if ((Vector3.Distance(aim.LKP, transform.position) < 10f) && (aisight.InSight == true))
+        if ((Vector3.Distance(aim.LKP, transform.position) < 10f) && (aim.InSight))
         {
             aim.navAgent.Stop();
             Debug.Log("close enough to attack");

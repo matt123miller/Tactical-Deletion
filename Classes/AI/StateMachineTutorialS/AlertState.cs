@@ -7,18 +7,22 @@ public class AlertState : MonoBehaviour, IEnemyState
 
     private readonly AIManager aim;
 
-
+    public Transform playerTrans, alarmTrans;
+    private GameObject[] alarmTransforms;
+    private AudioSource shoutClip;
+    //private Transform[] arrTranAlarms;
     public float searchTimer = 0f;
 
     public AlertState(AIManager aim)
     {
         this.aim = aim;
+        shoutClip = GetComponent<AudioSource>();
+
     }
 
 
     public void UpdateState()
     {
-        Look();
         Search();
     }
 
@@ -58,7 +62,7 @@ public class AlertState : MonoBehaviour, IEnemyState
         }
     }
 
-    //Not ideal solution, see below, however it's the best I have.
+    //Not ideal solution, see below, however it's the best I have for now.
     private Transform GetClosestAlarm(GameObject[] alarms)
     {
         Transform bestTarget = null;
@@ -76,7 +80,7 @@ public class AlertState : MonoBehaviour, IEnemyState
         return bestTarget;
     }
 
-    //Currently not working, it is the ideal solution but navmeshpaths can take seconds to calculate
+    //Currently not working, it is the ideal solution but navmeshpaths take time to calculate
     //This is bad. For now I am just finding the closest using Vector3.Distance()
     private Transform GetClosestAlarmPath(GameObject[] alarms)
     {
@@ -94,12 +98,12 @@ public class AlertState : MonoBehaviour, IEnemyState
             //NavMeshPath pathToTarget = NavMesh.CalculatePath(currentPosition, potentialTarget.transform.position, NavMesh.AllAreas, path);
 
             // agent.SetPath(pathToTarget);
-            agent.SetDestination(potentialTarget.transform.position);
+            aim.navAgent.SetDestination(potentialTarget.transform.position);
 
-            if (agent.remainingDistance < closestDistanceSqr)
+            if (aim.navAgent.remainingDistance < closestDistanceSqr)
             {
                 //problem is here, agent.remainingdistance doesn't seem to work
-                closestDistanceSqr = agent.remainingDistance;
+                closestDistanceSqr = aim.navAgent.remainingDistance;
                 bestTarget = potentialTarget.transform;
             }
 

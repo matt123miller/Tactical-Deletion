@@ -5,29 +5,15 @@ public class AISight : MonoBehaviour
 {
 
 
-    RaycastHit rayHit;
+    RaycastHit hit;
     public AIManager aim;
     private bool inSight;
-    float fUpdateChase = 0.3f; //
-    float fUpdateCount = 0.0f;
-    private GameObject goPlayer;
+    float fUpdateTarget = 0.2f;
+    float fUpdateTimer = 0.0f;
     Vector3 targetPos;
 
     [SerializeField]
     private Transform eyes;
-    //public GameObject self;
-
-    //public float selfAlarmedCheck, selfAlarmTimer;
-
-    public NavMeshAgent agent { get; private set; }
-    public ThirdPersonCharacter character { get; private set; }
-
-
-    public bool InSight
-    {
-        get { return inSight; }
-        set { inSight = value; }
-    }
 
     public Transform Eyes
     {
@@ -37,9 +23,6 @@ public class AISight : MonoBehaviour
 
     private void Start()
     {
-        goPlayer = GameObject.FindWithTag("Player");
-
-        //EnemySelf = ;
     }
 
 
@@ -54,16 +37,19 @@ public class AISight : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (fUpdateCount > fUpdateChase)
+        if (fUpdateTimer > fUpdateTarget)
         {
-            fUpdateCount = 0.0f;
+            fUpdateTimer = 0.0f;
+
             if (other.tag == "Player")
             {
-                inSight = Look(other.transform.position);
+                aim.InSight = Look(other.transform.position);
             }
         }
         else
-            fUpdateCount += Time.deltaTime;
+        {
+            fUpdateTimer += Time.deltaTime;
+        }
     }
 
     public bool Look(Vector3 otherPosition)
@@ -71,7 +57,8 @@ public class AISight : MonoBehaviour
 
 
         Vector3 direction = otherPosition - eyes.position;
-        RaycastHit hit = new RaycastHit();
+
+        hit = new RaycastHit();
 
         if (Physics.Raycast(eyes.position, direction, out hit))
         {
@@ -81,6 +68,7 @@ public class AISight : MonoBehaviour
                 aim.LKP = targetPos;
 
                 aim.SpottedByEnemy();
+
                 Debug.Log("Player is Sighted, player LKP updated " + aim.LKP);
                 return true;
             }
@@ -95,7 +83,7 @@ public class AISight : MonoBehaviour
 
     private void OnTriggerExit()
     {
-        InSight = false;
+        aim.InSight = false;
     }
 }
 
