@@ -51,8 +51,8 @@ public  class GlobalStateManager : IObserver, ISubject
     public List<IObserver> observers = new List<IObserver>();
 
 
-    // Properties
-    #region
+    
+    #region Properties
 
     public WorldState GSMState
     {
