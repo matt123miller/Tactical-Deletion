@@ -43,7 +43,7 @@ public  class GlobalStateManager : IObserver, ISubject
     private bool inCameraView;
 
     // Need to move to same audio changing system as doors.
-    private AudioSource audio, spottedSound;
+    private AudioSource audioTrack, spottedSound;
     public AudioClip ambientTrack, spottedTrack;
 
     private bool paused;
@@ -113,10 +113,10 @@ public  class GlobalStateManager : IObserver, ISubject
     void Start()
     {
         var audios = gameObject.GetComponents<AudioSource>();
-        audio = audios[0];
+        audioTrack = audios[0];
         
-        audio.clip = ambientTrack;
-        audio.Play();
+        audioTrack.clip = ambientTrack;
+        audioTrack.Play();
 
         spottedSound = audios[1];
         //pauseMenu.SetActive(false);
@@ -125,6 +125,7 @@ public  class GlobalStateManager : IObserver, ISubject
     public void Subscribe(IObserver observer) {
         
             observers.Add(observer);
+        Debug.Log(observer);
     }
 
     public void Unsubscribe(IObserver observer) {
@@ -138,17 +139,38 @@ public  class GlobalStateManager : IObserver, ISubject
            
            observer.UpdateThisObserver(newState);
            
-           if (observer is AIManager){
+           //if (observer is AIManager){
               
-               AIManager aim = observer as AIManager;
-               aim.LKP = globalLKP;
-           }
+           //    AIManager aim = observer as AIManager;
+           //    aim.LKP = globalLKP;
+           //}
        }
     }
     
     override public void UpdateThisObserver(WorldState newState) {
 
         gsmState = newState;
+        switch (newState) {
+
+            case WorldState.alarmState:
+                SetStateAlarm();
+                break;
+
+            case WorldState.ambientState:
+                SetStateAmbient();
+                break;
+
+            case WorldState.spottedState:
+                SetStateSpotted();
+                break;
+
+            case WorldState.unsureState:
+                // ??
+                break;
+
+            default:
+                break;
+        }
     }
 
     
@@ -160,24 +182,32 @@ public  class GlobalStateManager : IObserver, ISubject
     public void SetStateAmbient(){
         
         gsmState = WorldState.ambientState;
-        audio.clip = ambientTrack;
-           
-        if (!audio.isPlaying) {
+        ResetGlobalLKP();
+
+        audioTrack.clip = ambientTrack;
+          
+        // Is this IF necessary? Surely you can just play audio anyway with new track. 
+        if (!audioTrack.isPlaying) {
             
-             audio.Play();
+             audioTrack.Play();
         }
+
+        Notify(gsmState);
     }
     
     public void SetStateAlarm(){
         
         gsmState = WorldState.alarmState;
-        
+
+        Notify(gsmState);
     }
     
     public void SetStateSpotted()
     {
+
         if (gsmState != WorldState.spottedState)
         {
+            Debug.Log("Spotted!");
             gsmState = WorldState.spottedState;
             
             spottedSound.Play();
@@ -185,12 +215,12 @@ public  class GlobalStateManager : IObserver, ISubject
         //every time the player is spotted the timer is set to 0
         spottedResetTimer = 0f;
 
+        Notify(gsmState);
     }
     
-    public void SetStateUnsure() {
-        
+    public void SetStateUnsure()
+    {    
         SetStateAmbient();
-        ResetGlobalLKP();
         Notify(gsmState);
     }
     
@@ -213,7 +243,6 @@ public  class GlobalStateManager : IObserver, ISubject
         InAlarmView = true;
         AlarmTimerActive = false;
         globalLKP = v3;
-        Notify(gsmState);
         SetStateSpotted();
     }
 
@@ -223,8 +252,8 @@ public  class GlobalStateManager : IObserver, ISubject
     // Update is called once per frame
     private void Update()
     {
-        //if (Input.GetButtonUp("Cancel"))//escape key
-        //    TogglePause();
+        if (Input.GetButtonUp("Cancel"))//escape key
+            TogglePause();
 
         //alarm state music
         if (gsmState == WorldState.alarmState)
@@ -264,6 +293,13 @@ public  class GlobalStateManager : IObserver, ISubject
             ResetGlobalLKP();
             Notify(gsmState);
         }
+    }
+
+    private void TogglePause()
+    {
+        Time.timeScale = 0f;
+
+        // Eventually turn some GUI on
     }
 
     // unused

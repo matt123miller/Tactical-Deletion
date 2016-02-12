@@ -158,7 +158,8 @@ public class ThirdPersonCharacter : MonoBehaviour {
 		if (!crouchInput) {
             Ray crouchRay = new Ray(GetComponent<Rigidbody>().position + Vector3.up * capsule.radius * 0.4f, Vector3.up);
             float crouchRayLength = originalHeight - capsule.radius * 0.4f;
-			if (Physics.SphereCast (crouchRay, capsule.radius * 0.4f, crouchRayLength)) {
+			if (Physics.SphereCast (crouchRay, capsule.radius * 0.4f, crouchRayLength, 10)) {
+                
 				crouchInput = true;
 			}
 		}

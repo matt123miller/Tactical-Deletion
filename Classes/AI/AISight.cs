@@ -66,10 +66,7 @@ public class AISight : MonoBehaviour
         {
             if (hit.collider.tag == "Player")
             {
-                targetPos = hit.collider.gameObject.transform.position;
-                aim.LKP = targetPos;
-
-                aim.SpottedByEnemy();
+                aim.PlayerInVision(hit.transform.position);
 
                 Debug.Log("Player is Sighted, player LKP updated " + aim.LKP);
                 return true;
@@ -85,7 +82,10 @@ public class AISight : MonoBehaviour
 
     private void OnTriggerExit()
     {
-        aim.InSight = false;
+        if (inSight)
+        {
+            aim.PlayerLeftVision();
+        }
     }
 }
 

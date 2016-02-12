@@ -49,6 +49,7 @@ public class AttackState : MonoBehaviour, IEnemyState
     public void ToPatrolState()
     {
         aim.currentState = (IEnemyState)aim.patrolState;
+        aim.SetAnimWalking();
 
     }
 

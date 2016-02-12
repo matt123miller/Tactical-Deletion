@@ -47,13 +47,13 @@ public class AIManager : IObserver
     public NavMeshAgent navAgent;
 
 
-    private GameObject playerGO;
+    private Transform playerTransform;
     private Vector3 resetPosition = new Vector3(1000.0f, 1000.0f, 1000.0f);
     [SerializeField]
     private Vector3 lastKnownPos, previousSighting, targetPos;
 
     [SerializeField]
-    private float cooldownCheck, cooldownTimer, timer;
+    private float cooldownTarget, cooldownTimer, suspicionValue;
 
     #region Properties
 
@@ -88,17 +88,20 @@ public class AIManager : IObserver
         aiSight.aim = this;
         aiSight.Eyes = gameObject.transform;
         
-        playerGO = GameObject.FindGameObjectWithTag("Player");
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         navAgent = GetComponentInChildren<NavMeshAgent>();
         character = GetComponent<ThirdPersonCharacter>();
         selfHealth = GetComponent<Health>();
 
-        chaseState = new ChaseState(this, playerGO.transform);
+        // FSM
+        chaseState = new ChaseState(this, playerTransform);
         alertState = new AlertState(this);
-        patrolState = new PatrolState(this, navAgent);
+        patrolState = new PatrolState(this, navAgent, GetComponent<Waypoints>().waypointTargets);
         attackState = new AttackState(this);
 
         currentState = patrolState;
+
+        SetAnimWalking();
     }
 
     void Start()
@@ -110,8 +113,30 @@ public class AIManager : IObserver
 
     override public void UpdateThisObserver(WorldState newState)
     {
-       
-       if (AIState != AIStates.personalAlarmed) {
+        switch (newState)
+        {
+
+            case WorldState.alarmState:
+                currentState = alertState;
+                break;
+
+            case WorldState.ambientState:
+                currentState = patrolState;
+                Reset();
+                break;
+
+            case WorldState.spottedState:
+                currentState = chaseState;
+                break;
+
+            case WorldState.unsureState:
+                // ??
+                break;
+
+            default:
+                break;
+        }
+        if (AIState != AIStates.personalAlarmed) {
            
            Reset();
        }
@@ -121,7 +146,7 @@ public class AIManager : IObserver
     public void Reset()
     {
 
-        AIState = AIStates.patrolling;
+        currentState = patrolState;
         lastKnownPos = gsm.ResetPosition;
     }
 
@@ -137,12 +162,36 @@ public class AIManager : IObserver
         currentState.ToChaseState();
     }
 
+    public void PlayerInVision(Vector3 playerPosition)
+    {
+        lastKnownPos = playerPosition;
+        inSight = true;
+
+    }
+
+
+    public void PlayerLeftVision()
+    {
+        inSight = false;
+        
+    }
+
+    public void SetAnimRunning()
+    {
+
+    }
+
+    public void SetAnimWalking()
+    {
+        
+    }
+
     // Update is called once per frame
     void Update()
     {
 
         #region Boilerplate for AIM 
-        if (playerGO != null)
+        if (playerTransform != null)
         {
             // update the agents posiiton 
             navAgent.transform.position = transform.position;
@@ -158,19 +207,18 @@ public class AIManager : IObserver
             character.Move(Vector3.zero, false, false, transform.position + transform.forward * 100);
         }
         #endregion
-
         
         currentState.UpdateState();
-
+        
         // Check AISight for current sight status, do stuff.
+        
 
-
-        if ((gsm.GSMState == WorldState.alarmState) && (AIState != AIStates.personalAlarmed) && !inSight)
-        {
-            AIState = AIStates.personalAlarmed;
-            //unsureAlarmed = true;
-            //cooldownTimer = 0f; //maybe
-        }
+        //if ((gsm.GSMState == WorldState.alarmState) && (AIState != AIStates.personalAlarmed) && !inSight)
+        //{
+        //    AIState = AIStates.personalAlarmed;
+        //    //unsureAlarmed = true;
+        //    //cooldownTimer = 0f; //maybe
+        //}
 
         //if ((AIState == AIStates.personalAlarmed) && aiSight.InSight)
         //{
@@ -184,7 +232,7 @@ public class AIManager : IObserver
         {
             cooldownTimer += Time.deltaTime;
 
-            if (cooldownTimer > cooldownCheck)
+            if (cooldownTimer > cooldownTarget)
             {
                 Reset();
                 cooldownTimer = 0f;

@@ -16,6 +16,8 @@ GameObject:
   - 114: {fileID: 11417684}
   - 114: {fileID: 11409932}
   - 114: {fileID: 11465696}
+  - 114: {fileID: 11461790}
+  - 82: {fileID: 8211824}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -50,7 +52,7 @@ GameObject:
   - 33: {fileID: 3361722}
   - 65: {fileID: 6561722}
   - 114: {fileID: 11461722}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1347,8 +1349,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 117730}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.81999993, y: .610000014, z: 2.08999991}
+  m_LocalRotation: {x: 0, y: -.997055113, z: 0, w: .0766887739}
+  m_LocalPosition: {x: -23.4400005, y: 0, z: 6.86000013}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 480318}
@@ -1374,8 +1376,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 161722}
-  m_LocalRotation: {x: .0334467366, y: -.443771541, z: -.688730836, w: -.572361827}
-  m_LocalPosition: {x: -4.15999985, y: .589999974, z: -6.69000006}
+  m_LocalRotation: {x: -.00240929821, y: .445023686, z: .726979017, w: .522924125}
+  m_LocalPosition: {x: -4.94000006, y: .589999974, z: -6.36000013}
   m_LocalScale: {x: 11.2000017, y: 1.67999983, z: 11.2000027}
   m_Children: []
   m_Father: {fileID: 493804}
@@ -2537,6 +2539,76 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: .100000001, y: .100000001, z: .100000001}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!82 &8211824
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117730}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
 --- !u!95 &9517682
 Animator:
   serializedVersion: 3
@@ -2606,9 +2678,9 @@ MonoBehaviour:
   lastKnownPos: {x: 0, y: 0, z: 0}
   previousSighting: {x: 0, y: 0, z: 0}
   targetPos: {x: 0, y: 0, z: 0}
-  cooldownCheck: 0
+  cooldownTarget: 0
   cooldownTimer: 0
-  timer: 0
+  suspicionValue: 0
 --- !u!114 &11417688
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2653,6 +2725,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aim: {fileID: 0}
   eyes: {fileID: 0}
+--- !u!114 &11461790
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c53095365a1c224a9385e9229c27cbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypointTargets:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &11465696
 MonoBehaviour:
   m_ObjectHideFlags: 1

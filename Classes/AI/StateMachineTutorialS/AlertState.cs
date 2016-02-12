@@ -16,7 +16,7 @@ public class AlertState : MonoBehaviour, IEnemyState
     public AlertState(AIManager aim)
     {
         this.aim = aim;
-        shoutClip = GetComponent<AudioSource>();
+        shoutClip = aim.gameObject.GetComponent<AudioSource>();
 
     }
 
@@ -129,6 +129,8 @@ public class AlertState : MonoBehaviour, IEnemyState
     {
         aim.currentState = (IEnemyState)aim.patrolState;
         searchTimer = 0f;
+        aim.SetAnimWalking();
+
     }
 
     public void ToAlertState()
