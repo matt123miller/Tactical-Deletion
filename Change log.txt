@@ -1,23 +1,6 @@
-TO DO:
-
-Have enemy vision increase a float until Spotted occurs, begin decreasing when you leave trigger.
-
-Sort out observer
-
-Sort out room prefabs with new door system.
-
-Set door colour based on required key
-
-Rotate cameras with anim
-
-Alarms should play from specific points - Working on it
-
-Diagetic interface, disappears when not needed
-
-12/02/16
-
-Lots of updates recently, currently testing the FSM and trying to rectify olf code design decisions. Also why does the player duck in ANY collider? layermask?
-Added the Vision Cone layer so that the players PreventStandingInLowHeadroom method will not occur if the collider is on this layer.
+Make the XRay shader from https://www.youtube.com/watch?v=OJkGGuudm38
+Test AI
+Refactor loading and screen fade into separate files
 
 30/12/15
 
