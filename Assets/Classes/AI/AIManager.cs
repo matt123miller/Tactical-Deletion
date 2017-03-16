@@ -222,12 +222,12 @@ public class AIManager : IObserver
             //float walkMultiplier = (walkToggle ? 1 : 0.5f);
             //move *= walkMultiplier;
             // use the values to move the character;
-            character.Move(navAgent.desiredVelocity, false, false, targetPos);
+            character.Move(navAgent.desiredVelocity, false, false);
         }
         else
         {
             // We still need to call the character's move function, but we send zeroed input as the move param.
-            character.Move(Vector3.zero, false, false, transform.position + transform.forward * 100);
+            character.Move(Vector3.zero, false, false);
         }
         #endregion
 
