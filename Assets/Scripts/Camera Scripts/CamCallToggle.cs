@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnitySampleAssets.Cameras;
 
 public class CamCallToggle : MonoBehaviour
 {
@@ -19,13 +17,10 @@ public class CamCallToggle : MonoBehaviour
 
         fpc.enabled = false;
         thirdPerson.SetActive(true);
-        //tpc.enabled = true;
-        //firstPerson.SetActive(false);
 
         fpc.tag = "Untagged";
         tpc.tag = "MainCamera";
         
-        //RootPlayerManager.CurrentPlayerType = thirdPerson;
 
         gsm = gameObject.GetComponentInChildren<GlobalStateManager>();
         audios = gsm.gameObject.GetComponents<AudioSource>();
@@ -36,15 +31,11 @@ public class CamCallToggle : MonoBehaviour
     public void ToggleCall()
     {
         fpc.enabled = !fpc.enabled;
-        //tpc.enabled = !tpc.enabled;
 
         if (fpc.enabled)
         {
             fpc.tag = "MainCamera";
             thirdPerson.SetActive(false);
-            //firstPerson.SetActive(true);
-
-            //RootPlayerManager.CurrentPlayerType = firstPerson;
 
             reverbZone.enabled = true;
             foreach (AudioSource var in audios)
@@ -55,10 +46,7 @@ public class CamCallToggle : MonoBehaviour
         else
         {
             tpc.tag = "MainCamera";
-            //firstPerson.SetActive(false);
             thirdPerson.SetActive(true);
-
-            //RootPlayerManager.CurrentPlayerType = thirdPerson;
 
             reverbZone.enabled = false;
             foreach (AudioSource var in audios)
