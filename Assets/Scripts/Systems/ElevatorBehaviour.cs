@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using AsyncSceneTransition;
 
 public class ElevatorBehaviour : MonoBehaviour {
 
